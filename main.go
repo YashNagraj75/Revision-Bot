@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"github.com/charmbracelet/huh"
+	"github.com/charmbracelet/lipgloss"
+	xstrings "github.com/charmbracelet/x/exp/strings"
+	"strings"
 )
 
 var Theme = huh.ThemeCatppuccin()
@@ -13,8 +16,6 @@ func main() {
 		Description("This is a simple tool to help you revise for your exams ✌️✌️✌️").
 		WithTheme(Theme).
 		Run()
-
-
 	
 	HelpRevise()
 	
@@ -83,6 +84,7 @@ func DAA(unit string) string{
 	case "Unit 3":
 		err:= huh.NewSelect[string]().
 		Title("Select a sub-topic").
+		Description("Press anykey to exit").
 		Options(
 			huh.NewOption("Intro Presorting","Intro Presorting"),
 			huh.NewOption("Heap Sort","Heap Sort"),
@@ -94,12 +96,9 @@ func DAA(unit string) string{
 		Run()
 		
 		material := DAA_Helper(subtopic, unit)
-		Display(material)
+		DisplayRevision(material)
 
 		HandleError(err)
-
-
-
 	}
 	
 	return unit
@@ -154,6 +153,31 @@ func Display(input string) string{
 
 	return ""
 }
+
+
+func DisplayRevision(revision string, subtopic string){
+	var sb strings.Builder
+		keyword := func(s string) string {
+			return lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Render(s)
+		}
+		fmt.Fprintf(&sb,
+			"Topic: %s\n Important Points: %s\n"
+			lipgloss.NewStyle().Bold(true).Render("REVISION "),
+			keyword(subtopic),
+			keyword(revision),
+		)
+		fmt.Println(
+			lipgloss.NewStyle().
+				Width(40).
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("63")).
+				Padding(1, 2).
+				Render(sb.String()),
+		)
+}
+
+
+
 func HandleError(err error) {
 	if err == huh.ErrUserAborted {
 		os.Exit(0)
