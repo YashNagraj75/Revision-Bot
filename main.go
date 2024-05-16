@@ -5,7 +5,6 @@ import (
 	"os"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
-	xstrings "github.com/charmbracelet/x/exp/strings"
 	"strings"
 )
 
@@ -96,7 +95,7 @@ func DAA(unit string) string{
 		Run()
 		
 		material := DAA_Helper(subtopic, unit)
-		DisplayRevision(material)
+		DisplayRevision(material,subtopic)
 
 		HandleError(err)
 	}
@@ -106,7 +105,7 @@ func DAA(unit string) string{
 
 
 func DAA_Helper(subtopic string, unit string) string{
-	var revision string
+	var revision  string
 	switch unit{
 		case "Unit 1":
 			switch subtopic{
@@ -120,17 +119,62 @@ func DAA_Helper(subtopic string, unit string) string{
 		case "Unit 3":
 			switch subtopic{
 				case "Intro Presorting":
-					revision = `ALGORITHM PresortElementUniqueness(A[0..n − 1])
-						//Solves the element uniqueness problem by sorting the array first
-						//Input: An array A[0..n − 1] of orderable elements
-						//Output: Returns “true” if A has no equal elements, “false” otherwise
-						sort the array A
-						for i ← 0 to n − 2 do
-							if A[i] = A[i + 1]return false
-						return true`
+					revision =  `ALGORITHM PresortElementUniqueness(A[0..n − 1])
+//Solves the element uniqueness problem by sorting the array first
+//Input: An array A[0..n − 1] of orderable elements
+//Output: Returns “true” if A has no equal elements, “false” otherwise
+sort the array A
+for i ← 0 to n − 2 do
+    if A[i] = A[i + 1]return false
+		return true
+
+Efficiency: T (n) = Tsort(n) + Tscan(n) ∈ (n log n) + (n) = (n log n).`
+
+
+				case "Heap Sort":
+					revision = `ALGORITHM HeapBottomUp(H[1..n])
+							//Constructs a heap from elements of a given array
+							// by the bottom-up algorithm
+							//Input: An array H[1..n] of orderable items
+							//Output: A heap H[1..n]
+
+							for i ← n/2 downto 1 do
+								k ← i; v ← H[k]
+								heap ← false
+								while not heap and 2 ∗ k ≤ n do
+									j ← 2 ∗ k
+									if j<n //there are two children
+										if H[j ] < H[j + 1] j ← j + 1
+											if v ≥ H[j ]
+												heap ← true
+										else H[k]← H[j ]; k ← j
+									H[k]← v
+									
+							Efficiency: Cworst(n) = 2(n − log2(n + 1))`
+				
+				case "Red-Black Trees":
+					revision = `searchElement (tree, val) 
+Step 1:
+If tree -> data = val OR tree = NULL
+	Return tree
+Else
+	If val data
+		Return searchElement (tree -> left, val)
+Else
+	Return searchElement (tree -> right, val)
+[ End of if ]
+[ End of if ]`
+				
 			}
 	}
 
+	// lines := strings.Split(revision, "\n")
+
+	// for i, line := range lines {
+	// 	lines[i] = strings.TrimSpace(line)
+	// }
+
+	// revision = strings.Join(lines,"\n")
 	return revision
 }
 
@@ -161,17 +205,17 @@ func DisplayRevision(revision string, subtopic string){
 			return lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Render(s)
 		}
 		fmt.Fprintf(&sb,
-			"Topic: %s\n Important Points: %s\n"
-			lipgloss.NewStyle().Bold(true).Render("REVISION "),
+			"%s\n\nTopic: %s\n\nAlgorithms: \n\n%s\n",
+			lipgloss.NewStyle().Bold(true).Render("REVISION"),
 			keyword(subtopic),
 			keyword(revision),
 		)
 		fmt.Println(
 			lipgloss.NewStyle().
-				Width(40).
+				Width(55).
 				BorderStyle(lipgloss.RoundedBorder()).
 				BorderForeground(lipgloss.Color("63")).
-				Padding(1, 2).
+				Padding(1, 1).
 				Render(sb.String()),
 		)
 }
